@@ -22,3 +22,5 @@ create_info_file() {
 
 
 test for push
+
+test from atom
