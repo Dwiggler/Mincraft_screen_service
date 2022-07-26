@@ -19,3 +19,6 @@ create_info_file() {
 	echo "$(ps -ef | grep minecraft | grep java | awk {'print $2'})" >> /opt/minecraft/mainsurvival/pid.txt
 	echo "SCREEN= $(screen -ls | grep minecraft | awk {'print $1'})" >> /opt/minecraft/mainsurvival/screeninfo.txt
 }
+
+
+test for push
