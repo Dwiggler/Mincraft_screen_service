@@ -2,7 +2,7 @@
 #v0.9
 
 #get command flag passed
-workdir=$"/opt/minecraft/mainsurvival/"
+workdir="/opt/minecraft/mainsurvival/"
 ARG=$(echo $1 | tr '[:upper:]' '[:lower:]')
 
 #relocate to working WorkingDirectory
@@ -87,18 +87,18 @@ srv_stop() {
 
 		service_check
 
+		#passing the service stop command
 		screen -S minecraft -p 0 -X stuff "stop^M"
 		echo "stop command was passed" >> /opt/minecraft/mainsurvival/startup.log
 
-		#echo "sleeping for 15 seconds"
-		#sleep 15
-
+		#monitors service until full stop and then lets script continue
 		echo "running loop check for service"
 		x=1
 		while [ $x != 0 ]; do	x=$(service_check); done
 
+		#sends exit command to close out of the screen page
 		screen -S minecraft -p 0 -X stuff "exit^M"
-		echo "sent command to kill screen session"
+		echo "sent command to kill screen session" >> /opt/minecraft/mainsurvival/startup.log
 
 		#removing previous info file to indicate system is not running
 		sceeninfo_file=$(ls -l /opt/minecraft/mainsurvival/screeninfo.txt | wc -l)
@@ -128,4 +128,5 @@ case $ARG in
 	srv_stop
 	srv_start
 	;;
+
 esac
