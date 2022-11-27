@@ -1,16 +1,21 @@
 #!/bin/sh
-#v0.1
+#v0.9
 
 #get command flag passed
-
+workdir=$"/opt/minecraft/mainsurvival/"
 ARG=$(echo $1 | tr '[:upper:]' '[:lower:]')
 
 #relocate to working WorkingDirectory
-cd /opt/minecraft/mainsurvival/
+cd $workdir
 
 #for creating time stamps on log files
 timestamp() {
 	date +"%Y%m%d_%H:%M:%S"
+}
+
+#checks to see if service is already running
+service_check () {
+        ps -ef | grep mine | grep -v grep | grep -v SCREEN | wc -l
 }
 
 #grabs the PID for the minecrat process and screen pid/name
@@ -21,6 +26,106 @@ create_info_file() {
 }
 
 
-test for push
+srv_start() {
+		#removing previous startup log
+		startlog=$(ls -l /opt/minecraft/mainsurvival/startup.log | wc -l)
+		echo "number of startup.log files is $startlog"
 
-test from atom
+		if [ $startlog != 0 ]
+		then
+	       echo "removing statup.log file"
+	       rm -f /opt/minecraft/mainsurvival/startup.log
+		fi
+
+		#starting new startup log
+		echo "$(timestamp): Script beginning run"  > /usr/games/minecraft/startup.log
+
+		#making sure no screen for service exists, if it does, script exits with error in startup log
+		screen_run=$(screen -list | grep minecraft | wc -l)
+		echo "$(timestamp): Number of running instances of screen with the name of minecraft $screen_run" >> /opt/minecraft/mainsurvival/startup.log
+
+		if [ $screen_run != 0 ]
+		then
+	         echo "$(timestamp): There was already a screen with the name minecraft running" >> /opt/minecraft/mainsurvival/startup.log
+	         exit
+
+		else
+	         screen -d -m -S minecraft
+	         echo "$(timestamp): screen with the name minecraft started in disconneded mode" >> /opt/minecraft/mainsurvival/startup.log
+
+		fi
+
+		#providing time for screen to start
+		echo "Sleep for 1 second" >> /opt/minecraft/mainsurvival/startup.log
+		sleep 1
+
+		#checks if screen is running before executing server start command
+		screen_chk=$(screen -list | grep minecraft | wc -l)
+		echo "$(timestamp): output of screen_chk value = $screen_chk" >> /opt/minecraft/mainsurvival/startup.log
+		if [ $screen_chk = 1 ]
+				then
+						screen -S minecraft -p 0 -X stuff '/usr/bin/java -Xmx1024M -Xms1024M -jar /opt/minecraft/mainsurvival/minecraft.server nogui^M'
+						echo "$(timestamp): Command to execute minecraft server .jar block" >> /opt/minecraft/mainsurvival/startup.log
+				else
+						echo "$(timestamp): screen_chk did not = 1" >> /opt/minecraft/mainsurvival/startup.log
+		fi
+
+		#get info about running process
+		SRVRUN=$(ps -ef | grep minecraft.server | grep -v grep)
+		echo "$(timestamp): ps output: $SRVRUN" >> /opt/minecraft/mainsurvival/startup.log
+
+		#run funtion to create info file with PID and Screen info
+		echo "running loop check for service"
+		x=0
+		while [ $x -gt 0 ]; do x=$(service_check); done
+
+		#echo "creating pid and screeninfo files"
+		create_info_file
+}
+
+srv_stop() {
+
+		service_check
+
+		screen -S minecraft -p 0 -X stuff "stop^M"
+		echo "stop command was passed" >> /opt/minecraft/mainsurvival/startup.log
+
+		#echo "sleeping for 15 seconds"
+		#sleep 15
+
+		echo "running loop check for service"
+		x=1
+		while [ $x != 0 ]; do	x=$(service_check); done
+
+		screen -S minecraft -p 0 -X stuff "exit^M"
+		echo "sent command to kill screen session"
+
+		#removing previous info file to indicate system is not running
+		sceeninfo_file=$(ls -l /opt/minecraft/mainsurvival/screeninfo.txt | wc -l)
+		pid_file=$(ls -l /opt/minecraft/mainsurvival/pid.txt | wc -l)
+		echo "number of screeninfo.txt is $screeninfo_file"
+		echo "number of pid.txt is $pid_file"
+
+		if [ $screeninfo_file -gt 0 ]
+		then
+        echo "removing screeninfo.txt and pid.txt files" >> /opt/minecraft/mainsurvival/startup.log
+        rm -f /opt/minecraft/mainsurvival/screeninfo.txt
+				rm -f /opt/minecraft/mainsurvival/pid.txt
+		fi
+}
+
+case $ARG in
+
+	start)
+	srv_start
+	;;
+
+	stop)
+	srv_stop
+	;;
+
+	restart)
+	srv_stop
+	srv_start
+	;;
+esac
