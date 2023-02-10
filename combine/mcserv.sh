@@ -38,7 +38,7 @@ srv_start() {
 		fi
 
 		#starting new startup log
-		echo "$(timestamp): Script beginning run"  > /usr/games/minecraft/startup.log
+		echo "$(timestamp): Script beginning run"  > /opt/minecraft/mainsurvival/startup.log
 
 		#making sure no screen for service exists, if it does, script exits with error in startup log
 		screen_run=$(screen -list | grep minecraft | wc -l)
