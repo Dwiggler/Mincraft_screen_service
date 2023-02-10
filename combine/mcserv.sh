@@ -29,11 +29,11 @@ create_info_file() {
 srv_start() {
 		#removing previous startup log
 		startlog=$(ls -l /opt/minecraft/mainsurvival/startup.log | wc -l)
-		echo "number of startup.log files is $startlog"
+		echo "number of startup.log files is $startlog" >> /opt/minecraft/mainsurvival/startup.log
 
 		if [ $startlog != 0 ]
 		then
-	       echo "removing statup.log file"
+	       echo "removing statup.log file" >> /opt/minecraft/mainsurvival/startup.log
 	       rm -f /opt/minecraft/mainsurvival/startup.log
 		fi
 
@@ -75,7 +75,7 @@ srv_start() {
 		echo "$(timestamp): ps output: $SRVRUN" >> /opt/minecraft/mainsurvival/startup.log
 
 		#run funtion to create info file with PID and Screen info
-		echo "running loop check for service"
+		echo "running loop check for service" >> /opt/minecraft/mainsurvival/startup.log
 		x=0
 		while [ $x -gt 0 ]; do x=$(service_check); done
 
@@ -92,7 +92,7 @@ srv_stop() {
 		echo "stop command was passed" >> /opt/minecraft/mainsurvival/startup.log
 
 		#monitors service until full stop and then lets script continue
-		echo "running loop check for service"
+		echo "running loop check for service" >> /opt/minecraft/mainsurvival/startup.log
 		x=1
 		while [ $x != 0 ]; do	x=$(service_check); done
 
@@ -103,8 +103,8 @@ srv_stop() {
 		#removing previous info file to indicate system is not running
 		sceeninfo_file=$(ls -l /opt/minecraft/mainsurvival/screeninfo.txt | wc -l)
 		pid_file=$(ls -l /opt/minecraft/mainsurvival/pid.txt | wc -l)
-		echo "number of screeninfo.txt is $screeninfo_file"
-		echo "number of pid.txt is $pid_file"
+		echo "number of screeninfo.txt is $screeninfo_file" >> /opt/minecraft/mainsurvival/startup.log
+		echo "number of pid.txt is $pid_file" >> /opt/minecraft/mainsurvival/startup.log
 
 		if [ $screeninfo_file -gt 0 ]
 		then
