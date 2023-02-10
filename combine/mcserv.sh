@@ -79,7 +79,7 @@ srv_start() {
 		x=0
 		while [ $x -gt 0 ]; do x=$(service_check); done
 
-		#echo "creating pid and screeninfo files"
+		echo "creating pid and screeninfo files" >> /opt/minecraft/mainsurvival/startup.log
 		create_info_file
 }
 
