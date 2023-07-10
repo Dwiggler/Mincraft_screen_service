@@ -21,8 +21,8 @@ service_check () {
 #grabs the PID for the minecrat process and screen pid/name
 create_info_file() {
 
-	echo "$(ps -ef | grep minecraft | grep java | awk {'print $2'})" >> /opt/minecraft/mainsurvival/pid.txt
-	echo "SCREEN= $(screen -ls | grep minecraft | awk {'print $1'})" >> /opt/minecraft/mainsurvival/screeninfo.txt
+	echo "$(ps -ef | grep minecraft | grep java | awk {'print $2'})" > /opt/minecraft/mainsurvival/pid.txt
+	echo "SCREEN= $(screen -ls | grep minecraft | awk {'print $1'})" > /opt/minecraft/mainsurvival/screeninfo.txt
 }
 
 
