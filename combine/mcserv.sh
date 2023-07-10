@@ -15,7 +15,7 @@ timestamp() {
 
 #checks to see if service is already running
 service_check () {
-        ps -ef | grep mine | grep -v grep | grep -v SCREEN | wc -l
+        ps -ef | grep mainsurvival | grep -v grep | wc -l
 }
 
 #grabs the PID for the minecrat process and screen pid/name
