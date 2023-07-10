@@ -106,7 +106,7 @@ srv_stop() {
 		echo "number of screeninfo.txt is $screeninfo_file" >> /opt/minecraft/mainsurvival/startup.log
 		echo "number of pid.txt is $pid_file" >> /opt/minecraft/mainsurvival/startup.log
 
-		if [ $screeninfo_file -gt 0 ]
+		if [ $screeninfo_file > 0 ]
 		then
         echo "removing screeninfo.txt and pid.txt files" >> /opt/minecraft/mainsurvival/startup.log
         rm -f /opt/minecraft/mainsurvival/screeninfo.txt
