@@ -85,8 +85,6 @@ srv_start() {
 
 srv_stop() {
 
-		service_check
-
 		#passing the service stop command
 		screen -S minecraft -p 0 -X stuff "stop^M"
 		echo "stop command was passed" >> /opt/minecraft/mainsurvival/startup.log
@@ -101,12 +99,12 @@ srv_stop() {
 		echo "sent command to kill screen session" >> /opt/minecraft/mainsurvival/startup.log
 
 		#removing previous info file to indicate system is not running
-		sceeninfo_file=$(ls -l /opt/minecraft/mainsurvival/screeninfo.txt | wc -l)
+		screeninfo_file=$(ls -l /opt/minecraft/mainsurvival/screeninfo.txt | wc -l)
 		pid_file=$(ls -l /opt/minecraft/mainsurvival/pid.txt | wc -l)
 		echo "number of screeninfo.txt is $screeninfo_file" >> /opt/minecraft/mainsurvival/startup.log
 		echo "number of pid.txt is $pid_file" >> /opt/minecraft/mainsurvival/startup.log
 
-		if [ $screeninfo_file > 0 ]
+		if [ $screeninfo_file -gt 0 ]
 		then
         echo "removing screeninfo.txt and pid.txt files" >> /opt/minecraft/mainsurvival/startup.log
         rm -f /opt/minecraft/mainsurvival/screeninfo.txt
